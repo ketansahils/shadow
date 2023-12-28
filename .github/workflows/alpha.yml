@@ -61,7 +61,7 @@ jobs:
       - uses: docker/setup-buildx-action@v2
 
       - name: Configure AWS Profile
-        uses: aws-actions/configure-aws-credentials@v2
+        uses: aws-actions/configure-aws-credentials@v3
         with:
           role-to-assume: arn:aws:iam::103675691537:role/github-actions-second
           aws-region: eu-central-1
