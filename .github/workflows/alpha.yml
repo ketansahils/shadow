@@ -52,9 +52,9 @@ jobs:
         id: extract-image-tag
         run: |
           echo "image_tag=$(echo '${{ steps.meta.outputs.json }}' | jq -r '.tags | last | split(":")[1]')" >> $GITHUB_OUTPUT
-      - uses: docker/setup-qemu-actions@v2
+      - uses: docker/setup-qemu-action@v2
 
-      - uses: docker/setup-buildx-actions@v2
+      - uses: docker/setup-buildx-action@v2
 
       - name: Configure AWS Profile
         uses: aws-actions/configure-aws-credentials@v2
