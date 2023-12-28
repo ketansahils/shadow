@@ -1,0 +1,99 @@
+name: Alpha
+
+on:
+  pull_request:
+    paths:
+      - 'alpha/**'
+      - '!alpha/README.md'
+  push:
+    branches:
+      - 'main'
+    paths:
+      - 'alpha/**'
+      - '!alpha/README.md'
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  ci:
+    uses: ./.github/workflows/common.yml
+    with:
+      project-root: 'alpha-root'
+      root-package: 'alpha'
+    secrets: inherit
+  cd:
+    runs-on: ubuntu-latest
+    needs: ci
+    outputs:
+      image_tag: ${{ steps.extract-image-tag.outputs.image_tag }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Download artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: alpha-root_package
+          path: alpha-root/dist/alpha-*.whl
+
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: |
+            103675691537.dkr.ecr.eu-central.amazonaws.com/alpha-root
+          tags: |
+            type=sha
+            type=ref,event=pr
+            type=ref,event=branch,enable=${{ github.ref_name == 'main' }}
+      - name: Extract image tag
+        id: extract-image-tag
+        run: |
+          echo "image_tag=$(echo '${{ steps.meta.outputs.json }}' | jq -r '.tags | last | split(":")[1]')" >> $GITHUB_OUTPUT
+      - uses: docker/setup-qemu-actions@v2
+
+      - uses: docker/setup-buildx-actions@v2
+
+      - name: Configure AWS Profile
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: arn:aws:iam::103675691537:role/GitHub-Action-Role
+          aws-region: eu-central-1
+
+      - name: Log in ECR
+        uses: aws-actions/amazon-ecr-login@v1
+        with:
+          registries: 103675691537
+
+      - name: Docker build
+        uses: docker/build-push-action@v4
+        id: docker-build
+        with:
+          context: ./alpha
+          file: alpha/Dockerfile
+          load: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha, scope=${{ github.workflow }}
+          cache-to: type=gha, scope=${{ github.workflow }}
+
+      - name: Docker push
+        run: |
+          images="${{ steps.meta.outputs.tags }}"
+          imagesarray=($images)
+          for image in "${imagesarray[@]}"; do
+            docker push $image
+          done
+
+      - name: Image digest
+        id: image-digest
+        run: |
+          echo "Image: " >> $GITHUB_STEP_SUMMARY
+          echo "- \`103675691537.dkr.ecr.eu-central.amazonaws.com/alpha-root\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- \`${{ steps.docker-build.outputs.digest }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Image tags:" >> $GITHUB_STEP_SUMMARY
+          echo '${{ steps.meta.outputs.json }}' | jq '.tags | to_entries[] | "- `\(.value)`"' >> $GITHUB_STEP_SUMMARY
