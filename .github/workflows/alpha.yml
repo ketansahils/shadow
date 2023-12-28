@@ -20,7 +20,7 @@ jobs:
   ci:
     uses: ./.github/workflows/common.yml
     with:
-      project-root: 'alpha-root'
+      project-root: 'alpha'
       root-package: 'alpha'
     secrets: inherit
   cd:
@@ -36,14 +36,14 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: alpha-root_package
-          path: alpha-root/dist/alpha-*.whl
+          path: alpha/dist/alpha-*.whl
 
       - name: Docker meta
         id: meta
         uses: docker/metadata-action@v4
         with:
           images: |
-            103675691537.dkr.ecr.eu-central.amazonaws.com/alpha-root
+            103675691537.dkr.ecr.eu-central.amazonaws.com/alpha
           tags: |
             type=sha
             type=ref,event=pr
@@ -91,7 +91,7 @@ jobs:
         id: image-digest
         run: |
           echo "Image: " >> $GITHUB_STEP_SUMMARY
-          echo "- \`103675691537.dkr.ecr.eu-central.amazonaws.com/alpha-root\`" >> $GITHUB_STEP_SUMMARY
+          echo "- \`103675691537.dkr.ecr.eu-central.amazonaws.com/alpha\`" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "- \`${{ steps.docker-build.outputs.digest }}\`" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
