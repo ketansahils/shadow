@@ -5,12 +5,16 @@ on:
     paths:
       - 'alpha/**'
       - '!alpha/README.md'
+      - '.github/workflows/alpha.yml'
+      - '.github/workflows/common.yml'
   push:
     branches:
       - 'main'
     paths:
       - 'alpha/**'
       - '!alpha/README.md'
+      - '.github/workflows/alpha.yml'
+      - '.github/workflows/common.yml'
 
 permissions:
   id-token: write
