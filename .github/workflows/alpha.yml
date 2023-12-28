@@ -39,7 +39,7 @@ jobs:
       - name: Download artifact
         uses: actions/download-artifact@v3
         with:
-          name: alpha-root_package
+          name: alpha_package
           path: alpha/dist/alpha-*.whl
 
       - name: Docker meta
