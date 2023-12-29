@@ -78,7 +78,6 @@ jobs:
         with:
           context: ./alpha
           file: alpha/Dockerfile
-          load: true
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
