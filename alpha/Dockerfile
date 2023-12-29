@@ -2,7 +2,7 @@ FROM ubuntu:18.04
 
 
 RUN apt-get update && \
-    apt-get install -y python3.8 python3.8-dev python3.8-disutils build-essential ca-certificates curl openjdk-8-jdk-headless vim && \
+    apt-get install -y python3.8 python3.8-dev python3.8-distutils ca-certificates curl openjdk-8-jdk-headless vim && \
     update-alternatives --install /usr/bin/python python /usr/bin/python3.8 1 && \
     update-alternatives --set python /usr/bin/python3.8 && \
     curl -O https://bootstrap.pypa.io/get-pip.py && \
