@@ -79,18 +79,19 @@ jobs:
           context: ./alpha
           file: alpha/Dockerfile
           load: true
+          push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha, scope=${{ github.workflow }}
           cache-to: type=gha, scope=${{ github.workflow }}
 
-      - name: Docker push
-        run: |
-          images="${{ steps.meta.outputs.tags }}"
-          imagesarray=($images)
-          for image in "${imagesarray[@]}"; do
-            docker push $image
-          done
+#      - name: Docker push
+#        run: |
+#          images="${{ steps.meta.outputs.tags }}"
+#          imagesarray=($images)
+#          for image in "${imagesarray[@]}"; do
+#            docker push $image
+#          done
 
       - name: Image digest
         id: image-digest
