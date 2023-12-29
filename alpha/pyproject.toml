@@ -1,13 +1,18 @@
 [tool.poetry]
 name = "alpha"
 version = "0.1.0"
+packages = [{include = "src"},]
 description = "This is project alpha"
 authors = ["Ketan <ketansahils@gmail.com>"]
-readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.8"
+pandas = "^2.0.3"
 
+
+[tool.poetry.group.dev.dependencies]
+black = "^23.12.1"
+ruff = "^0.1.9"
 
 [build-system]
 requires = ["poetry-core"]
